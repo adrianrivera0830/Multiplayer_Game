@@ -1,0 +1,26 @@
+# Archivos y directorios generados por CLion
+.idea/
+
+# Directorios de compilación de CMake
+cmake-build-*/
+
+# Archivos generados por CMake
+CMakeCache.txt
+CMakeFiles/
+build.ninja
+.ninja_deps
+.ninja_log
+
+# Archivos binarios y ejecutables
+*.exe
+*.out
+*.app
+*.o
+*.obj
+*.so
+*.dylib
+*.dll
+
+# Archivos de registro y temporales
+*.log
+*.tmp
