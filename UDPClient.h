@@ -6,8 +6,7 @@
 #define UDPCLIENT_H
 
 
-#include "UDPSocket.h";
-
+#include "UDPSocket.h"
 class UDPClient {
 public:
     UDPClient() {

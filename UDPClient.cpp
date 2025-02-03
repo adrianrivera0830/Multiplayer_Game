@@ -22,7 +22,7 @@ void UDPClient::GetPublicIP() {
     //
     unsigned char response[512];
     struct sockaddr_in from;
-    int from_len = sizeof(from);
+    socklen_t from_len = sizeof(from);
     int received;
     while (true) {
         received = socket.ReceiveFrom((char *) response, sizeof(response),(struct sockaddr *) &from, &from_len);
