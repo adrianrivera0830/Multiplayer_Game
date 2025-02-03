@@ -1,7 +1,7 @@
 #include <iostream>
 #include "UDPClient.h"
 #include <cstdlib>
-
+#include <string>
 #define STUN_SERVER "stun.l.google.com"
 #define STUN_PORT 19302
 
@@ -40,8 +40,32 @@ void UDPClient::GetPublicIP() {
     std::cout << " Puerto Publico: " << mapped_port << std::endl;
 }
 
-void UDPClient::FindPeer() {
-    
+void UDPClient::FindPeer(char *address,int port) {
+    char *buffer = "hola mundo";
+
+    sockaddr_in peerAddress;
+    memset(&peerAddress, 0, sizeof(peerAddress));
+    peerAddress.sin_family = AF_INET;
+    peerAddress.sin_port = htons(port);
+    peerAddress.sin_addr.s_addr = inet_addr(address);
+
+    socklen_t peerLength = sizeof(peerAddress);
+
+    while (true) {
+        int bytes_sent = socket.SendTo(buffer,strlen(buffer),(sockaddr *)&peerAddress,peerLength);
+
+        int bytes_received = socket.ReceiveFrom((char *)buffer,strlen(buffer),(sockaddr *)&peerAddress,&peerLength);
+
+        if (bytes_received > 0) {
+            break;
+        }
+        std::cout << bytes_received << std::endl;
+
+    }
+
+
+
+
 }
 
 void UDPClient::CommunicationLoop() {

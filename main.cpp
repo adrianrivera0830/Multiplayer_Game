@@ -12,6 +12,14 @@ int main() {
     }
 #endif
     UDPClient client;
+    std::string address;
+    int port;
+    std::cout << "Ingresa la direccion IP:" ;
+    std::cin >> address;
+    std::cout << "Ingresa el Port: ";
+    std::cin >> port;
+    client.FindPeer(const_cast<char *>(address.c_str()),port);
+
 
 #ifdef _WIN32
     WSACleanup();

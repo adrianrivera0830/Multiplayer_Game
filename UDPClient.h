@@ -19,7 +19,7 @@ public:
     }
 
     void GetPublicIP();
-    void FindPeer();
+    void FindPeer(char *address, int port);
     void CommunicationLoop();
     UDPSocket socket;
 
