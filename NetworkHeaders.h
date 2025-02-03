@@ -26,19 +26,21 @@
 #endif
 
 #include <iostream>
-#include <string.h>
+#include <cstring>
 
 #if defined(_WIN32)
     #define ISVALIDSOCKET(s) ((s) != INVALID_SOCKET)
     #define CLOSESOCKET(s) closesocket(s)
     #define GETSOCKETERRNO() (WSAGetLastError())
     typedef int socklen_t;
+#define WOULD_BLOCK WSAEWOULDBLOCK
 #else
 #define ISVALIDSOCKET(s) ((s) >= 0)
 #define CLOSESOCKET(s) close(s)
 #define SOCKET int
 #define GETSOCKETERRNO() (errno)
 #define SOCKET_ERROR -1
+#define WOULD_BLOCK EWOULDBLOCK
 #endif
 
 /**

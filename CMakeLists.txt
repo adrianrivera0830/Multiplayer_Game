@@ -5,8 +5,10 @@ set(CMAKE_CXX_STANDARD 20)
 
 add_executable(Multiplayer_Game
         main.cpp
-        UDPClient.cpp
+        Peer.cpp
         UDPSocket.cpp
+        PacketHandler.cpp
+        PacketHandler.h
 )
 
 # Solo enlazar ws2_32 si estamos en Windows

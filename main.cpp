@@ -1,6 +1,6 @@
 #include <iostream>
 #include "NetworkHeaders.h"
-#include "UDPClient.h"
+#include "Peer.h"
 
 int main() {
 #ifdef _WIN32
@@ -11,7 +11,7 @@ int main() {
         return 1;
     }
 #endif
-    UDPClient client;
+    Peer client;
     std::string address;
     int port;
     std::cout << "Ingresa la direccion IP:" ;
