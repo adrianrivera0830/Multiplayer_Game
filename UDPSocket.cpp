@@ -36,57 +36,61 @@ bool UDPSocket::Bind() {
         std::cerr << "Error en bind(): " << GETSOCKETERRNO() << std::endl;
         return false;
     }
+    // Obtener la dirección y puerto asignados
+    sockaddr_in boundAddress;
+    socklen_t boundAddressLen = sizeof(boundAddress);
+    if (getsockname(m_socket, (struct sockaddr*)&boundAddress, &boundAddressLen) == -1)
+    {
+        std::cerr << "Error en getsockname(): " << GETSOCKETERRNO() << std::endl;
+        return false;
+    }
+
+
+    // Obtener el nombre del host
+    char localHostname[NI_MAXHOST];
+    if (gethostname(localHostname, sizeof(localHostname)) == -1)
+    {
+        std::cerr << "Error en gethostname(): " << GETSOCKETERRNO() << std::endl;
+        return false;
+    }
+
+    std::cout << "Nombre del host: " << localHostname << "\n";
+
+    // Obtener direcciones IP disponibles
+    struct addrinfo hints, * addrInfoList;
+    memset(&hints, 0, sizeof(hints));
+    hints.ai_family = AF_INET;
+    hints.ai_flags = AI_PASSIVE; // Correcto para obtener direcciones IP
+    hints.ai_socktype = SOCK_DGRAM;
+
+    if (getaddrinfo(localHostname, nullptr, &hints, &addrInfoList) != 0)
+    {
+        std::cerr << "Error en getaddrinfo(): " << GETSOCKETERRNO() << std::endl;
+        return false;
+    }
+
+    std::cout << "Direcciones IP disponibles:\n";
+    for (struct addrinfo* currentAddr = addrInfoList; currentAddr != nullptr; currentAddr = currentAddr->ai_next)
+    {
+        sockaddr_in* ipAddress = reinterpret_cast<sockaddr_in*>(currentAddr->ai_addr);
+        char ipStr[INET_ADDRSTRLEN];
+
+        if (inet_ntop(AF_INET, &ipAddress->sin_addr, ipStr, sizeof(ipStr)) == nullptr)
+        {
+            std::cerr << "Error al convertir la dirección IP\n";
+            continue; // Saltar esta dirección si hay un problema
+        }
+
+        std::cout << ipStr << "\n";
+    }
+
+    std::cout << "Puerto privado: " << ntohs(boundAddress.sin_port) << "\n\n";
+
+
+    freeaddrinfo(addrInfoList); // Liberar memoria de `getaddrinfo`
+
     return true;
-    // // Obtener la dirección y puerto asignados
-    // sockaddr_in boundAddress;
-    // socklen_t boundAddressLen = sizeof(boundAddress);
-    // if (getsockname(m_socket, (struct sockaddr*)&boundAddress, &boundAddressLen) == -1)
-    // {
-    //     std::cerr << "Error en getsockname(): " << GETSOCKETERRNO() << std::endl;
-    //     return false;
-    // }
-    //
-    // std::cout << "Puerto asignado: " << ntohs(boundAddress.sin_port) << "\n";
-    //
-    // // Obtener el nombre del host
-    // char localHostname[NI_MAXHOST];
-    // if (gethostname(localHostname, sizeof(localHostname)) == -1)
-    // {
-    //     std::cerr << "Error en gethostname(): " << GETSOCKETERRNO() << std::endl;
-    //     return false;
-    // }
-    //
-    // std::cout << "Nombre del host: " << localHostname << "\n";
-    //
-    // // Obtener direcciones IP disponibles
-    // struct addrinfo hints, * addrInfoList;
-    // memset(&hints, 0, sizeof(hints));
-    // hints.ai_family = AF_INET;
-    // hints.ai_flags = AI_PASSIVE; // Correcto para obtener direcciones IP
-    // hints.ai_socktype = SOCK_DGRAM;
-    //
-    // if (getaddrinfo(localHostname, nullptr, &hints, &addrInfoList) != 0)
-    // {
-    //     std::cerr << "Error en getaddrinfo(): " << GETSOCKETERRNO() << std::endl;
-    //     return false;
-    // }
-    //
-    // std::cout << "Direcciones IP disponibles:\n";
-    // for (struct addrinfo* currentAddr = addrInfoList; currentAddr != nullptr; currentAddr = currentAddr->ai_next)
-    // {
-    //     sockaddr_in* ipAddress = reinterpret_cast<sockaddr_in*>(currentAddr->ai_addr);
-    //     char ipStr[INET_ADDRSTRLEN];
-    //
-    //     if (inet_ntop(AF_INET, &ipAddress->sin_addr, ipStr, sizeof(ipStr)) == nullptr)
-    //     {
-    //         std::cerr << "Error al convertir la dirección IP\n";
-    //         continue; // Saltar esta dirección si hay un problema
-    //     }
-    //
-    //     std::cout << "- " << ipStr << "\n";
-    // }
-    //
-    // freeaddrinfo(addrInfoList); // Liberar memoria de `getaddrinfo`
+
 }
 
 int UDPSocket::SendTo(char *buffer, int bufferLen, sockaddr *to, socklen_t toLen) {
