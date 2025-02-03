@@ -9,16 +9,20 @@
 #include "NetworkHeaders.h"
 class UDPSocket {
 public:
-    UDPSocket()
-    {
-        Initialize();
-    }
-    void Initialize();
-    bool SendTo(void* buffer, int bufferLen, sockaddr* to, int toLen);
-    bool ReceiveFrom(void* buffer, int bufferLen, sockaddr* from, socklen_t* fromLen);
+
+
+    bool Initialize();
+    bool Bind();
+
+    int SendTo(char *buffer, int bufferLen, sockaddr *to, int toLen);
+
+    int ReceiveFrom(char *buffer, int bufferLen, sockaddr *from, socklen_t *fromLen);
     bool GetIsSocketValid();
+
+    ~UDPSocket();
 
 private:
     SOCKET m_socket;
+
 };
 #endif //UDPSOCKET_H

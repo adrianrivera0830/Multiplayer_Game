@@ -21,6 +21,7 @@
     #include <arpa/inet.h>
     #include <netdb.h>
     #include <unistd.h>
+    #include <fcntl.h>
     #include <errno.h>
 #endif
 
@@ -40,4 +41,22 @@
 #define SOCKET_ERROR -1
 #endif
 
-#endif //NETWORKHEADERS_H
+/**
+ * @brief Configura un socket en modo no bloqueante.
+ * @param socket El socket a modificar.
+ * @return `true` si la operación fue exitosa, `false` en caso de error.
+ */
+inline bool setSocketNonBlocking(SOCKET socket) {
+#if defined(_WIN32)
+    u_long mode = 1;
+    return ioctlsocket(socket, FIONBIO, &mode) == 0;
+#else
+    int flags = fcntl(socket, F_GETFL, 0);
+    if (flags == -1) {
+        return false;
+    }
+    return fcntl(socket, F_SETFL, flags | O_NONBLOCK) != -1;
+#endif
+}
+
+#endif // NETWORKHEADERS_H
