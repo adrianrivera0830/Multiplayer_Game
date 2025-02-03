@@ -5,20 +5,26 @@
 #ifndef UDPCLIENT_H
 #define UDPCLIENT_H
 
+
 #include "UDPSocket.h";
 
 class UDPClient {
 public:
     UDPClient() {
-        socket.Initialize();
+        if (!socket.Initialize()) return;
+        if (!socket.Bind()) return;
+        GetPublicIP();
+
+
     }
 
+    void GetPublicIP();
+    void FindPeer();
     void CommunicationLoop();
+    UDPSocket socket;
 
 private:
-    UDPSocket socket;
 };
-
 
 
 #endif //UDPCLIENT_H

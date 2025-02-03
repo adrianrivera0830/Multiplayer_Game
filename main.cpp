@@ -1,5 +1,7 @@
 #include <iostream>
 #include "NetworkHeaders.h"
+#include "UDPClient.h"
+
 int main() {
 #ifdef _WIN32
     WSADATA wsaData;
@@ -9,6 +11,7 @@ int main() {
         return 1;
     }
 #endif
+    UDPClient client;
 
 #ifdef _WIN32
     WSACleanup();
