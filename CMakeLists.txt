@@ -3,7 +3,14 @@ project(Multiplayer_Game)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(Multiplayer_Game main.cpp)
+add_executable(Multiplayer_Game
+        main.cpp
+        UDPClient.cpp
+        UDPSocket.cpp
+)
+
+# Solo enlazar ws2_32 si estamos en Windows
 if(WIN32)
     target_link_libraries(Multiplayer_Game ws2_32)
 endif()
+
