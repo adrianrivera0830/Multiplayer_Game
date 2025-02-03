@@ -7,9 +7,9 @@
 
 
 #include "UDPSocket.h"
-class UDPClient {
+class Peer {
 public:
-    UDPClient() {
+    Peer() {
         if (!socket.Initialize()) return;
         if (!socket.Bind()) return;
         GetPublicIP();
@@ -23,6 +23,8 @@ public:
     UDPSocket socket;
 
 private:
+    sockaddr_in clientAddr;
+
 };
 
 

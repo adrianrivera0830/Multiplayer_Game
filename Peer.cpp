@@ -1,11 +1,11 @@
 #include <iostream>
-#include "UDPClient.h"
+#include "Peer.h"
 #include <cstdlib>
 #include <string>
 #define STUN_SERVER "stun.l.google.com"
 #define STUN_PORT 19302
 
-void UDPClient::GetPublicIP() {
+void Peer::GetPublicIP() {
     struct sockaddr_in server_addr;
     server_addr.sin_family = AF_INET;
     server_addr.sin_port = htons(STUN_PORT);
@@ -35,38 +35,43 @@ void UDPClient::GetPublicIP() {
     mapped_port ^= 0x2112; // Aplicar XOR con la máscara estándar de STUN (0x2112)
 
     unsigned char *mapped_addr = response + 26;
-    std::cout << " IP Publica: " << (int) mapped_addr[0] << "." << (int) mapped_addr[1] << "."
+    std::cout << "IP Publica: " << (int) mapped_addr[0] << "." << (int) mapped_addr[1] << "."
             << (int) mapped_addr[2] << "." << (int) mapped_addr[3] << std::endl;
-    std::cout << " Puerto Publico: " << mapped_port << std::endl;
+    std::cout << "Puerto Publico: " << mapped_port << std::endl;
 }
 
-void UDPClient::FindPeer(char *address,int port) {
-    char *buffer = "hola mundo";
-
+void Peer::FindPeer(char *address,int port) {
+    char *sendBuffer = "Adrian";
     sockaddr_in peerAddress;
+
     memset(&peerAddress, 0, sizeof(peerAddress));
     peerAddress.sin_family = AF_INET;
     peerAddress.sin_port = htons(port);
     peerAddress.sin_addr.s_addr = inet_addr(address);
-
     socklen_t peerLength = sizeof(peerAddress);
 
-    while (true) {
-        int bytes_sent = socket.SendTo(buffer,strlen(buffer),(sockaddr *)&peerAddress,peerLength);
 
-        int bytes_received = socket.ReceiveFrom((char *)buffer,strlen(buffer),(sockaddr *)&peerAddress,&peerLength);
+    socklen_t clientLen = sizeof(clientAddr);
+    while (true) {
+
+        int bytes_sent = socket.SendTo(sendBuffer,strlen(sendBuffer),(sockaddr *)&peerAddress,peerLength);
+        if (bytes_sent == -1) {
+
+        }
+
+        char bufferrecv[1024];
+
+
+        int bytes_received = socket.ReceiveFrom(bufferrecv,strlen(bufferrecv),reinterpret_cast<sockaddr *>(&clientAddr),&clientLen);
 
         if (bytes_received > 0) {
+            sendBuffer[bytes_received] = '\0'; // Asegurar terminación de string
+        } else if (bytes_received == -1 && GETSOCKETERRNO() == WOULD_BLOCK) {
+            // No hay datos disponibles, continuar sin bloquear
+        } else {
+            std::cerr << GETSOCKETERRNO() << std::endl;
             break;
         }
-        std::cout << bytes_received << std::endl;
 
     }
-
-
-
-
-}
-
-void UDPClient::CommunicationLoop() {
 }
